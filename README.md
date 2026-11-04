@@ -1,7 +1,7 @@
 # Sistema de Gestión de Ventas
 
 ## Descripción
-Este proyecto consiste en el desarrollo de un sistema de gestión de ventas utilizando Node.js, Express y Microsoft SQL Server. Su objetivo es administrar vendedores, clientes, productos y pedidos.
+Este proyecto consiste en el desarrollo de un sistema de gestión de ventas utilizando Node.js, Express y Microsoft SQL Server. Su objetivo es administrar la información de vendedores, clientes, productos y pedidos mediante una API.
 
 ## Tecnologías utilizadas
 - Node.js
@@ -9,7 +9,8 @@ Este proyecto consiste en el desarrollo de un sistema de gestión de ventas util
 - Microsoft SQL Server Express
 - SQL Server Management Studio (SSMS)
 - JavaScript
-- SQL
+- Knex
+- Thunder Client
 
 ## Estructura de la base de datos
 La base de datos `SistemaGestionVentas` contiene las siguientes tablas:
@@ -23,33 +24,70 @@ La base de datos `SistemaGestionVentas` contiene las siguientes tablas:
 ## Instalación y configuración
 
 1. Instalar Node.js y Microsoft SQL Server Express.
-2. Abrir el proyecto en Visual Studio Code.
-3. Abrir una terminal dentro de la carpeta del proyecto.
-4. Ejecutar `npm install` para instalar las dependencias.
-5. Configurar la conexión a SQL Server en el archivo `db.js`, utilizando los datos del equipo donde se ejecutará el proyecto.
-6. Abrir `SistemaGestionVentas.sql` en SQL Server Management Studio y ejecutar el script para crear la base de datos y los datos de prueba. Se recomienda hacerlo en una instancia de prueba.
+2. Descargar o clonar el repositorio.
+3. Abrir el proyecto en Visual Studio Code.
+4. Abrir una terminal dentro de la carpeta del proyecto.
+5. Ejecutar `npm install` para instalar las dependencias.
+6. Crear un archivo `.env` tomando como referencia `.env.example`.
+7. Configurar los datos de conexión a SQL Server en el archivo `.env`.
+8. Abrir el archivo `script.sql` en SQL Server Management Studio y ejecutarlo para crear la base de datos y cargar los registros de ejemplo.
+
+**Nota:** El script debe ejecutarse cuando la base de datos `SistemaGestionVentas` todavía no exista.
 
 ## Ejecución
-
-Para iniciar el servidor en modo normal:
-
-`npm start`
 
 Para iniciar el servidor en modo desarrollo:
 
 `npm run dev`
 
+Para iniciar el servidor en modo normal:
+
+`npm start`
+
 La API estará disponible en:
 
 `http://localhost:3000`
 
-## Rutas disponibles actualmente
+## Rutas de la API
 
+### Rutas originales
 - `GET /api/vendedores`: consulta vendedores.
 - `GET /api/clientes`: consulta clientes.
 - `GET /api/productos`: consulta productos.
+- `GET /api/pedidos`: consulta pedidos.
 
-Las operaciones adicionales se documentarán conforme se implementen y prueben.
+### Rutas implementadas con Knex
+
+**Vendedores**
+- `GET /api/vendedores-knex`
+- `GET /api/vendedores-knex/:id`
+- `POST /api/vendedores-knex`
+- `PUT /api/vendedores-knex/:id`
+- `DELETE /api/vendedores-knex/:id`
+
+**Productos**
+- `GET /api/productos-knex`
+- `GET /api/productos-knex/:id`
+- `POST /api/productos-knex`
+- `PUT /api/productos-knex/:id`
+- `DELETE /api/productos-knex/:id`
+
+**Pedidos**
+- `GET /api/pedidos-knex`
+- `GET /api/pedidos-knex/:id`
+- `POST /api/pedidos-knex`
+- `PUT /api/pedidos-knex/:id`
+- `DELETE /api/pedidos-knex/:id`
+
+**Detalle de pedidos**
+- `GET /api/detalle-pedidos-knex`
+- `GET /api/detalle-pedidos-knex/:id`
+- `POST /api/detalle-pedidos-knex`
+- `PUT /api/detalle-pedidos-knex/:id`
+- `DELETE /api/detalle-pedidos-knex/:id`
+
+## Pruebas
+Las rutas fueron probadas utilizando Thunder Client, verificando las operaciones de consulta, registro, actualización y eliminación de información.
 
 ## Autor
-Estudiante de Ingeniería en Desarrollo de Software.
+Julio Alberto Gonzalez Tello.

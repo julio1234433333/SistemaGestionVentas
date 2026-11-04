@@ -3,15 +3,24 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { conectarDB, sql } = require('./db');
-
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+const vendedorRoutes = require('./routes/vendedorRoutes.js');
+const productoRoutes = require('./routes/productoRoutes.js');
+const pedidoRoutes = require('./routes/pedidoRoutes.js');
+const detallePedidoRoutes = require('./routes/detallePedidoRoutes.js');
+
+app.use('/api/vendedores-knex', vendedorRoutes);
+app.use('/api/productos-knex', productoRoutes);
+app.use('/api/pedidos-knex', pedidoRoutes);
+app.use('/api/detalle-pedidos-knex', detallePedidoRoutes);
+
 app.get('/', (req, res) => {
     res.json({
-        mensaje : 'API del Sistema de Gestion de ventas funcionando'
+        mensaje: 'API del Sistema de Gestion de ventas funcionando'
     });
 });
 
