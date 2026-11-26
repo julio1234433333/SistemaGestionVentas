@@ -1,28 +1,35 @@
 # Sistema de Gestión de Ventas
 
 ## Descripción
-Este proyecto consiste en el desarrollo de un sistema de gestión de ventas utilizando Node.js, Express y Microsoft SQL Server. Su objetivo es administrar la información de vendedores, clientes, productos, inventarios y pedidos mediante una API REST.
 
-En este tercer avance se incorporaron funcionalidades de autenticación, protección de rutas y gestión de pedidos e inventarios, fortaleciendo la seguridad y el funcionamiento del backend.
+Sistema de gestión de ventas desarrollado mediante Node.js, Express y Microsoft SQL Server Express. Su objetivo es administrar vendedores, clientes, productos, inventarios y pedidos mediante una API REST.
+
+En este proyecto se implementaron operaciones CRUD, arquitectura modular, autenticación de usuarios, protección de rutas, validaciones, paginación y medidas de seguridad para fortalecer el funcionamiento y rendimiento del backend.
 
 ## Tecnologías utilizadas
+
 - Node.js
-- Express
+- Express.js
 - Microsoft SQL Server Express
 - SQL Server Management Studio (SSMS)
 - JavaScript
 - Knex.js
 - JSON Web Token (JWT)
+- bcryptjs
+- AES-256-GCM
+- XSS
 - Thunder Client
 
 ## Estructura de la base de datos
+
 La base de datos `SistemaGestionVentas` contiene las siguientes tablas:
 
-- Vendedores: almacena la información de los vendedores.
-- Clientes: almacena la información de los clientes.
-- Productos: almacena los productos, sus precios y existencias.
-- Pedidos: registra los pedidos realizados por los clientes y atendidos por los vendedores.
-- DetallePedido: registra los productos y cantidades de cada pedido.
+- **Vendedores:** almacena la información de los vendedores.
+- **Clientes:** registra los datos de los clientes.
+- **Productos:** almacena productos, precios y existencias.
+- **Pedidos:** registra los pedidos realizados por los clientes y atendidos por los vendedores.
+- **DetallePedido:** almacena los productos, cantidades y precios unitarios de cada pedido.
+- **Usuarios:** almacena las cuentas de acceso y sus contraseñas mediante hashes.
 
 ## Instalación y configuración
 
@@ -32,10 +39,11 @@ La base de datos `SistemaGestionVentas` contiene las siguientes tablas:
 4. Abrir una terminal dentro de la carpeta del proyecto.
 5. Ejecutar `npm install` para instalar las dependencias.
 6. Crear un archivo `.env` tomando como referencia `.env.example`.
-7. Configurar los datos de conexión a SQL Server en el archivo `.env`.
-8. Abrir el archivo `script.sql` en SQL Server Management Studio y ejecutarlo para crear la base de datos y cargar los registros de ejemplo.
+7. Configurar los datos de conexión a SQL Server.
+8. Configurar las variables secretas necesarias para JWT y AES.
+9. Abrir `script.sql` en SQL Server Management Studio y ejecutarlo para crear la base de datos y cargar los registros de ejemplo.
 
-**Nota:** El script debe ejecutarse cuando la base de datos `SistemaGestionVentas` todavía no exista.
+**Importante:** No compartir ni subir el archivo `.env` al repositorio. Las claves secretas deben mantenerse privadas.
 
 ## Ejecución
 
@@ -53,72 +61,114 @@ La API estará disponible en:
 
 ## Rutas de la API
 
-### Rutas originales
-- `GET /api/vendedores`: consulta vendedores.
-- `GET /api/clientes`: consulta clientes.
-- `GET /api/productos`: consulta productos.
-- `GET /api/pedidos`: consulta pedidos.
+### Autenticación
 
-### Rutas implementadas con Knex
+- `POST /api/auth/registrar`: registra un usuario.
+- `POST /api/auth/login`: inicia sesión y genera un token JWT.
+- `GET /api/auth/perfil`: consulta la información del usuario autenticado.
 
-**Vendedores**
+### Vendedores
+
 - `GET /api/vendedores-knex`
 - `GET /api/vendedores-knex/:id`
 - `POST /api/vendedores-knex`
 - `PUT /api/vendedores-knex/:id`
 - `DELETE /api/vendedores-knex/:id`
 
-**Productos**
+### Clientes
+
+- `GET /api/clientes-knex`
+- `GET /api/clientes-knex/:id`
+- `POST /api/clientes-knex`
+- `PUT /api/clientes-knex/:id`
+- `DELETE /api/clientes-knex/:id`
+
+### Productos
+
 - `GET /api/productos-knex`
 - `GET /api/productos-knex/:id`
 - `POST /api/productos-knex`
 - `PUT /api/productos-knex/:id`
 - `DELETE /api/productos-knex/:id`
 
-**Pedidos**
+### Pedidos
+
 - `GET /api/pedidos-knex`
 - `GET /api/pedidos-knex/:id`
 - `POST /api/pedidos-knex`
 - `PUT /api/pedidos-knex/:id`
 - `DELETE /api/pedidos-knex/:id`
 
-**Detalle de pedidos**
+### Detalle de pedidos
+
 - `GET /api/detalle-pedidos-knex`
 - `GET /api/detalle-pedidos-knex/:id`
 - `POST /api/detalle-pedidos-knex`
 - `PUT /api/detalle-pedidos-knex/:id`
 - `DELETE /api/detalle-pedidos-knex/:id`
 
+## Paginación
+
+Se implementó un sistema de paginación para facilitar la consulta de registros y evitar devolver todos los datos en una sola respuesta.
+
+Los endpoints de vendedores, clientes, productos y pedidos permiten utilizar los parámetros:
+
+- `page`: número de página.
+- `limit`: cantidad de registros por página.
+
+Ejemplo:
+
+`GET /api/productos-knex?page=1&limit=10`
+
+La respuesta incluye los registros y los metadatos de paginación, como página actual, límite, total de registros y total de páginas. También se establece un límite máximo de 100 registros por consulta.
+
 ## Autenticación y seguridad
 
-Se incorporó un sistema de autenticación mediante JSON Web Token (JWT).
+Se implementaron diferentes mecanismos para proteger la API:
 
-Sus funcionalidades incluyen:
+- Autenticación mediante JSON Web Token (JWT).
+- Contraseñas protegidas mediante hashes con bcryptjs.
+- Tokens con tiempo de expiración de dos horas.
+- Verificación de tokens para acceder a las rutas protegidas.
+- Asignación del rol de vendedor durante el registro público.
+- Protección de entradas mediante un middleware XSS.
+- Consultas parametrizadas mediante Knex.js y SQL Server para reducir riesgos de SQL Injection.
+- Cifrado y descifrado de información mediante AES-256-GCM.
+- Uso de variables de entorno para mantener privadas las claves y los datos de conexión.
 
-- Registro de nuevos usuarios.
-- Inicio de sesión mediante credenciales.
-- Generación de tokens JWT.
-- Verificación de tokens para acceder a rutas protegidas.
-- Consulta del perfil del usuario autenticado mediante `GET /api/auth/perfil`.
-- Rechazo de solicitudes que no proporcionan un token JWT válido.
+Las rutas de registro e inicio de sesión permanecen disponibles sin autenticación. Las demás rutas de la API requieren un token válido.
 
-También se utilizan consultas mediante Knex.js para interactuar con la base de datos y reducir riesgos de SQL Injection.
+## Rendimiento y optimización
 
-## Gestión de inventarios y pedidos
+Se realizaron mejoras para optimizar las consultas y el manejo de información:
 
-El sistema contempla operaciones para consultar y actualizar productos y existencias, así como gestionar pedidos relacionados con clientes y vendedores.
+- Implementación de paginación en las consultas principales.
+- Uso de índices en columnas relacionadas con las consultas de pedidos.
+- Consultas ordenadas por identificador para mantener resultados consistentes.
+- Uso de Knex.js para organizar las operaciones con la base de datos.
 
-## Pruebas
+Se realizaron mediciones de tiempo de respuesta mediante Thunder Client. Los resultados variaron entre solicitudes, por lo que se consideraron mediciones de referencia y no una prueba de rendimiento controlada.
 
-Se utilizaron pruebas mediante Thunder Client para comprobar:
+## Pruebas realizadas
 
-- Inicio de sesión del administrador.
-- Consulta del perfil mediante JWT.
-- Registro de nuevos usuarios.
-- Inicio de sesión de usuarios registrados.
-- Acceso autorizado a rutas protegidas.
-- Denegación de acceso sin token JWT.
-- Consulta de vendedores mediante Knex.js.
+Se utilizó Thunder Client para verificar el funcionamiento de los endpoints y las medidas de seguridad.
+
+Entre las pruebas realizadas se encuentran:
+
+- Registro de usuarios.
+- Inicio de sesión y generación de tokens JWT.
+- Consulta de rutas protegidas sin token, obteniendo respuesta HTTP 401.
+- Acceso a rutas protegidas con token válido, obteniendo respuesta HTTP 200.
+- Rechazo de tokens inválidos o expirados.
+- Consulta de productos mediante paginación.
+- Consulta de vendedores, clientes y pedidos.
+- Operaciones CRUD.
+- Prueba de cifrado y descifrado AES-256-GCM.
+- Mediciones de tiempos de respuesta.
 
 ## Autor
-Julio Alberto Gonzalez Tello.
+
+Julio Alberto Gonzalez Tello
+
+CESUN UNIVERSIDAD  
+Ingeniería en Desarrollo de Software
