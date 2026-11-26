@@ -1,15 +1,28 @@
 
 const PedidoModel = require('../models/pedidoModel');
-
+const { obtenerPaginacion } = require('../utils/paginacion');
 const PedidoController = {
     obtenerTodos: async (req, res) => {
-        try {
-            const pedidos = await PedidoModel.obtenerTodos();
-            res.json(pedidos);
-        } catch (error) {
-            res.status(500).json({ error: error.message });
-        }
-    },
+    try {
+        const { page, limit, offset } = obtenerPaginacion(req.query);
+        const resultado = await PedidoModel.obtenerTodos(limit, offset);
+
+        res.json({
+            data: resultado.data,
+            pagination: {
+                page,
+                limit,
+                total: resultado.total,
+                totalPages: Math.ceil(resultado.total / limit)
+            }
+        });
+    } catch (error) {
+        res.status(500).json({
+            mensaje: 'Error al obtener pedidos',
+            error: error.message
+        });
+    }
+},
 
     obtenerPorId: async (req, res) => {
         try {
@@ -51,6 +64,35 @@ const PedidoController = {
             res.status(500).json({ error: error.message });
         }
     },
+
+
+    procesar: async (req, res) => {
+        try {
+            const { IdCliente, IdVendedor, Fecha, Productos } = req.body;
+
+            if (!IdCliente || !IdVendedor ||
+                !Array.isArray(Productos) || Productos.length === 0) {
+                return res.status(400).json({
+                    mensaje: 'Debe indicar cliente, vendedor y al menos un producto'
+                });
+            }
+
+            const resultado = await PedidoModel.procesarPedido({
+                IdCliente,
+                IdVendedor,
+                Fecha,
+                Productos
+            });
+
+            res.status(201).json(resultado);
+
+        } catch (error) {
+            res.status(error.status || 500).json({
+                error: error.message
+            });
+        }
+    },
+
 
     actualizar: async (req, res) => {
         try {
