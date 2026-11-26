@@ -1,7 +1,9 @@
 # Sistema de Gestión de Ventas
 
 ## Descripción
-Este proyecto consiste en el desarrollo de un sistema de gestión de ventas utilizando Node.js, Express y Microsoft SQL Server. Su objetivo es administrar la información de vendedores, clientes, productos y pedidos mediante una API.
+Este proyecto consiste en el desarrollo de un sistema de gestión de ventas utilizando Node.js, Express y Microsoft SQL Server. Su objetivo es administrar la información de vendedores, clientes, productos, inventarios y pedidos mediante una API REST.
+
+En este tercer avance se incorporaron funcionalidades de autenticación, protección de rutas y gestión de pedidos e inventarios, fortaleciendo la seguridad y el funcionamiento del backend.
 
 ## Tecnologías utilizadas
 - Node.js
@@ -9,7 +11,8 @@ Este proyecto consiste en el desarrollo de un sistema de gestión de ventas util
 - Microsoft SQL Server Express
 - SQL Server Management Studio (SSMS)
 - JavaScript
-- Knex
+- Knex.js
+- JSON Web Token (JWT)
 - Thunder Client
 
 ## Estructura de la base de datos
@@ -86,8 +89,36 @@ La API estará disponible en:
 - `PUT /api/detalle-pedidos-knex/:id`
 - `DELETE /api/detalle-pedidos-knex/:id`
 
+## Autenticación y seguridad
+
+Se incorporó un sistema de autenticación mediante JSON Web Token (JWT).
+
+Sus funcionalidades incluyen:
+
+- Registro de nuevos usuarios.
+- Inicio de sesión mediante credenciales.
+- Generación de tokens JWT.
+- Verificación de tokens para acceder a rutas protegidas.
+- Consulta del perfil del usuario autenticado mediante `GET /api/auth/perfil`.
+- Rechazo de solicitudes que no proporcionan un token JWT válido.
+
+También se utilizan consultas mediante Knex.js para interactuar con la base de datos y reducir riesgos de SQL Injection.
+
+## Gestión de inventarios y pedidos
+
+El sistema contempla operaciones para consultar y actualizar productos y existencias, así como gestionar pedidos relacionados con clientes y vendedores.
+
 ## Pruebas
-Las rutas fueron probadas utilizando Thunder Client, verificando las operaciones de consulta, registro, actualización y eliminación de información.
+
+Se utilizaron pruebas mediante Thunder Client para comprobar:
+
+- Inicio de sesión del administrador.
+- Consulta del perfil mediante JWT.
+- Registro de nuevos usuarios.
+- Inicio de sesión de usuarios registrados.
+- Acceso autorizado a rutas protegidas.
+- Denegación de acceso sin token JWT.
+- Consulta de vendedores mediante Knex.js.
 
 ## Autor
 Julio Alberto Gonzalez Tello.
