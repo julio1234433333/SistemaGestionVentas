@@ -1,26 +1,24 @@
-
 const db = require('../config/knex');
 
 const ProductoModel = {
-    obtenerTodos: async () => {
-        return await db('Productos').select('*');
-    },
+    
+obtenerTodos: async (limit, offset) => {
+    const resultado = await db('Productos')
+        .count({ total: 'IdProducto' })
+        .first();
 
-    obtenerPorId: async (id) => {
-        return await db('Productos')
-            .where({ IdProducto: id })
-            .first();
-    },
+    const productos = await db('Productos')
+        .select('*')
+        .orderBy('IdProducto', 'asc')
+        .limit(limit)
+        .offset(offset);
 
-    crear: async (producto) => {
-        return await db('Productos')
-            .insert({
-                Nombre: producto.Nombre,
-                Descripcion: producto.Descripcion,
-                Precio: producto.Precio,
-                Existencia: producto.Existencia
-            });
-    },
+    return {
+        data: productos,
+        total: Number(resultado.total)
+    };
+},
+
 
     actualizar: async (id, producto) => {
         return await db('Productos')
@@ -30,6 +28,19 @@ const ProductoModel = {
                 Descripcion: producto.Descripcion,
                 Precio: producto.Precio,
                 Existencia: producto.Existencia
+            });
+    },
+
+    consultarInventario: async () => {
+        return await db('Productos')
+            .select('IdProducto', 'Nombre', 'Existencia');
+    },
+
+    actualizarExistencia: async (id, cantidad) => {
+        return await db('Productos')
+            .where({ IdProducto: id })
+            .update({
+                Existencia: cantidad
             });
     },
 
