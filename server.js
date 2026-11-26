@@ -8,15 +8,37 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Middleware de protección XSS
+const xssMiddleware = require('./middlewares/xssMiddleware');
+app.use(xssMiddleware);
+
+// Rutas de autenticación
+const authRoutes = require('./routes/authRoutes.js');
+app.use('/api/auth', authRoutes);
+
+const verificarToken = require('./middlewares/authMiddleware');
+
+app.get('/api/auth/perfil', verificarToken, (req, res) => {
+    res.status(200).json({
+        mensaje: 'Acceso autorizado',
+        usuario: req.usuario
+    });
+});
+
+app.use('/api', verificarToken);
+
 const vendedorRoutes = require('./routes/vendedorRoutes.js');
 const productoRoutes = require('./routes/productoRoutes.js');
 const pedidoRoutes = require('./routes/pedidoRoutes.js');
 const detallePedidoRoutes = require('./routes/detallePedidoRoutes.js');
-
+const clienteRoutes = require('./routes/clienteRoutes.js');
 app.use('/api/vendedores-knex', vendedorRoutes);
 app.use('/api/productos-knex', productoRoutes);
 app.use('/api/pedidos-knex', pedidoRoutes);
 app.use('/api/detalle-pedidos-knex', detallePedidoRoutes);
+app.use('/api/clientes-knex', clienteRoutes);
+
+
 
 app.get('/', (req, res) => {
     res.json({
