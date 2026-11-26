@@ -26,6 +26,7 @@ const limpiarDatos = (datos) => {
 const xssMiddleware = (req, res, next) => {
     req.body = limpiarDatos(req.body);
     req.query = limpiarDatos(req.query);
+    req.params = limpiarDatos(req.params);
 
     next();
 };
